@@ -24,7 +24,7 @@ import static android.graphics.BitmapFactory.decodeStream;
 public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
 
     // API Strings //////////
-    private static final String API_URL = "https://api.nytimes.com/svc/books/v3/lists/current/DELETEME";
+    private static final String API_URL = "https://api.nytimes.com/svc/books/v3/lists/current/";
     private final String[] API_URL_LISTS = {"hardcover-fiction", "hardcover-nonfiction",
             "young-adult", "humor",
             "advice-how-to-and-miscellaneous",
