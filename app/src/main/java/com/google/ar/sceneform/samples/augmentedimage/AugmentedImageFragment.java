@@ -93,6 +93,7 @@ public class AugmentedImageFragment extends ArFragment {
   @Override
   protected Config getSessionConfiguration(Session session) {
     Config config = super.getSessionConfiguration(session);
+    config.setFocusMode(Config.FocusMode.AUTO);
     if (!setupAugmentedImageDatabase(config, session)) {
       SnackbarHelper
               .getInstance()
@@ -109,6 +110,7 @@ public class AugmentedImageFragment extends ArFragment {
       Log.e(TAG, "[!] Cannot Initialise Database [!]");
       return false;
     }
+    config.setAugmentedImageDatabase(databaseHelper.getImageDatabase(session));
 
     //Convert images->bitmap
     /*Bitmap augmentedImageBitmap = loadAugmentedImageBitmap(assetManager, DEFAULT_IMAGE_NAME);
@@ -131,7 +133,7 @@ public class AugmentedImageFragment extends ArFragment {
     augmentedImageDatabase.addImage(COCO_POPS_PACKAGING, cocoPopsBitmap);
     augmentedImageDatabase.addImage(DANI_DEX, daniDexBitmap);
     augmentedImageDatabase.addImage(WHITE_COCO_POPS_PACKAGING, whiteCocoPopsBitmap);*/
-    config.setAugmentedImageDatabase(databaseHelper.getImageDatabase(session));
+
     return true;
   }
 

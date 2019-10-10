@@ -75,11 +75,14 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
     // Misc //////////
     private StringBuilder stringBuilder = new StringBuilder();
     URL apiurl;
+
     /////////////////////////
 
     public AugmentedImageDatabaseHelper(Context context)
     {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        RetrieveData RD = new RetrieveData();
+        RD.execute();
     }
 
     @Override
@@ -152,20 +155,10 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
                         newVals.put(KEY_AUTHOR_COLUMN, bookauthor);
                         bookdesc = bookobj.getString("description");
                         newVals.put(KEY_DESCRIPTION_COLUMN, bookdesc);
+                        bookcoverURLstr = bookobj.getString("book_image");
+                        newVals.put(KEY_COVER_COLUMN, bookcoverURLstr);
                         // TODO: bookreview = GoogleApi -> Get Review via ISBN
                         // TODO: bookpagecount = GoogleApi -> Get page count via ISBN
-
-                        if (bookobj.has("book_image")) {
-                            bookcoverURLstr = bookobj.getString("book_image"); //GET IMAGE URL
-                            bookcoverURL = new URL(bookcoverURLstr);
-                            //TODO: Move this to imgdb creation
-                            try {
-                                bookcover = BitmapFactory.decodeStream(bookcoverURL.openStream());
-                            }
-                            catch(IOException e) {
-                                Log.e("Error", e.getMessage(), e);
-                            }
-                        }
                     }
                     SQLiteDatabase db = getWritableDatabase();
                     db.insert(DATABASE_TABLE_BOOKS, null, newVals);
@@ -184,14 +177,15 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
     public AugmentedImageDatabase getImageDatabase(Session session) {
         AugmentedImageDatabase augmentedImageDatabase = new AugmentedImageDatabase(session);
         String query = "SELECT * FROM " + DATABASE_TABLE_BOOKS;
-        String title = "";
+        String title;
+        String cover;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         while(cursor.moveToNext()) {
             title = cursor.getString(cursor.getColumnIndex(KEY_TITLE_COLUMN));
-            bookcoverURLstr = cursor.getString(cursor.getColumnIndex(KEY_COVER_COLUMN));
+            cover = cursor.getString(cursor.getColumnIndex(KEY_COVER_COLUMN));
             try {
-                bookcoverURL = new URL(bookcoverURLstr);
+                bookcoverURL = new URL(cover);
                 bookcover = BitmapFactory.decodeStream(bookcoverURL.openStream());
             }
             catch (IOException e) {
