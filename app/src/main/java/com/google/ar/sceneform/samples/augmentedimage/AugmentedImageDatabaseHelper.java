@@ -2,6 +2,7 @@ package com.google.ar.sceneform.samples.augmentedimage;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
@@ -9,6 +10,9 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.google.ar.core.AugmentedImageDatabase;
+import com.google.ar.core.Session;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import static android.graphics.BitmapFactory.decodeStream;
 
@@ -183,5 +188,27 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
                 Log.e("Error", e.getMessage(), e);
             }
         }
+    }
+
+    public AugmentedImageDatabase getImageDatabase(Session session) {
+        AugmentedImageDatabase augmentedImageDatabase = new AugmentedImageDatabase(session);
+        String query = "SELECT * FROM " + DATABASE_TABLE_BOOKS;
+        String title = "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        while(cursor.moveToNext()) {
+            title = cursor.getString(cursor.getColumnIndex(KEY_TITLE_COLUMN));
+            bookcoverURLstr = cursor.getString(cursor.getColumnIndex(KEY_COVER_COLUMN));
+            try {
+                bookcoverURL = new URL(bookcoverURLstr);
+                bookcover = BitmapFactory.decodeStream(bookcoverURL.openStream());
+            }
+            catch (IOException e) {
+                Log.e("Error", e.getMessage(),e);
+            }
+            augmentedImageDatabase.addImage(title, bookcover); //TODO: URL to Bitmap!
+        }
+        cursor.close();
+        return augmentedImageDatabase;
     }
 }

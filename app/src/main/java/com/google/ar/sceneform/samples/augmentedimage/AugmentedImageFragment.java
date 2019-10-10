@@ -102,7 +102,8 @@ public class AugmentedImageFragment extends ArFragment {
   }
 
   private boolean setupAugmentedImageDatabase(Config config, Session session) {
-    AugmentedImageDatabase augmentedImageDatabase;
+    //AugmentedImageDatabase augmentedImageDatabase;
+    AugmentedImageDatabaseHelper databaseHelper = new AugmentedImageDatabaseHelper(this.getContext());
     AssetManager assetManager = getContext() != null ? getContext().getAssets() : null;
     if (assetManager == null) {
       Log.e(TAG, "[!] Cannot Initialise Database [!]");
@@ -110,7 +111,7 @@ public class AugmentedImageFragment extends ArFragment {
     }
 
     //Convert images->bitmap
-    Bitmap augmentedImageBitmap = loadAugmentedImageBitmap(assetManager, DEFAULT_IMAGE_NAME);
+    /*Bitmap augmentedImageBitmap = loadAugmentedImageBitmap(assetManager, DEFAULT_IMAGE_NAME);
     if (augmentedImageBitmap == null) { return false; }
     Bitmap logoBitmap = loadAugmentedImageBitmap(assetManager, FLAG_IMAGE_NAME);
     if (logoBitmap == null) { return false; }
@@ -119,18 +120,18 @@ public class AugmentedImageFragment extends ArFragment {
     Bitmap daniDexBitmap = loadAugmentedImageBitmap(assetManager, DANI_DEX);
     if(daniDexBitmap == null) { return false; }
     Bitmap whiteCocoPopsBitmap = loadAugmentedImageBitmap(assetManager, WHITE_COCO_POPS_PACKAGING);
-    if(whiteCocoPopsBitmap == null) { return false; }
+    if(whiteCocoPopsBitmap == null) { return false; }*/
 
     //Add images to database (one at a time)
     // TODO create pre-generated imgdb - will have several adverts/packaging
       //TODO so this ain't ideal long-term
-    augmentedImageDatabase = new AugmentedImageDatabase(session);
+    /*augmentedImageDatabase = new AugmentedImageDatabase(session);
     augmentedImageDatabase.addImage(DEFAULT_IMAGE_NAME, augmentedImageBitmap);
     augmentedImageDatabase.addImage(FLAG_IMAGE_NAME, logoBitmap);
     augmentedImageDatabase.addImage(COCO_POPS_PACKAGING, cocoPopsBitmap);
     augmentedImageDatabase.addImage(DANI_DEX, daniDexBitmap);
-    augmentedImageDatabase.addImage(WHITE_COCO_POPS_PACKAGING, whiteCocoPopsBitmap);
-    config.setAugmentedImageDatabase(augmentedImageDatabase);
+    augmentedImageDatabase.addImage(WHITE_COCO_POPS_PACKAGING, whiteCocoPopsBitmap);*/
+    config.setAugmentedImageDatabase(databaseHelper.getImageDatabase(session));
     return true;
   }
 
