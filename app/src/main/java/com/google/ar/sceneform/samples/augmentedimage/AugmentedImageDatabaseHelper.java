@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.ar.core.AugmentedImageDatabase;
 import com.google.ar.core.Session;
@@ -22,7 +21,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import static android.graphics.BitmapFactory.decodeStream;
 
@@ -87,19 +85,12 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_DATABASE_TABLE_EXPENSES);
-        loadDatabase(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldversion, int newversion) {
         db.execSQL("DROP TABLE IF EXISTS '" + DATABASE_TABLE_BOOKS +"'");
         onCreate(db);
-    }
-
-    private void loadDatabase(SQLiteDatabase db) {
-
-        db = this.getWritableDatabase();
-        new RetrieveData().execute();
     }
 
     class RetrieveData extends AsyncTask<Void, Void, JSONObject> {
@@ -194,7 +185,7 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
         AugmentedImageDatabase augmentedImageDatabase = new AugmentedImageDatabase(session);
         String query = "SELECT * FROM " + DATABASE_TABLE_BOOKS;
         String title = "";
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         while(cursor.moveToNext()) {
             title = cursor.getString(cursor.getColumnIndex(KEY_TITLE_COLUMN));
