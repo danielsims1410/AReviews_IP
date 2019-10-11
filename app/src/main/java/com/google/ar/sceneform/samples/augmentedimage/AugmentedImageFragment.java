@@ -104,13 +104,13 @@ public class AugmentedImageFragment extends ArFragment {
 
   private boolean setupAugmentedImageDatabase(Config config, Session session) {
     //AugmentedImageDatabase augmentedImageDatabase;
-    AugmentedImageDatabaseHelper databaseHelper = new AugmentedImageDatabaseHelper(this.getContext());
+    AugmentedImageDatabaseHelper databaseHelper = new AugmentedImageDatabaseHelper(this.getContext(), session);
     AssetManager assetManager = getContext() != null ? getContext().getAssets() : null;
     if (assetManager == null) {
       Log.e(TAG, "[!] Cannot Initialise Database [!]");
       return false;
     }
-    config.setAugmentedImageDatabase(databaseHelper.getImageDatabase(session));
+    config.setAugmentedImageDatabase(databaseHelper.getAugmentedImageDatabase());
 
     //Convert images->bitmap
     /*Bitmap augmentedImageBitmap = loadAugmentedImageBitmap(assetManager, DEFAULT_IMAGE_NAME);

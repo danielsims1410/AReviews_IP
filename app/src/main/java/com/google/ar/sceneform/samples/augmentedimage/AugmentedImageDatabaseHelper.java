@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.google.ar.core.AugmentedImageDatabase;
 import com.google.ar.core.Session;
+import com.google.ar.core.exceptions.ImageInsufficientQualityException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -75,12 +76,14 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
     // Misc //////////
     private StringBuilder stringBuilder = new StringBuilder();
     URL apiurl;
+    private static final String TAG = "DATABASE HELPER";
+    AugmentedImageDatabase augmentedImageDatabase;
     /////////////////////////
 
-    public AugmentedImageDatabaseHelper(Context context)
+    public AugmentedImageDatabaseHelper(Context context, Session session)
     {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        new RetrieveData().execute(context);
+        new RetrieveData().execute(session);
     }
 
     @Override
@@ -94,14 +97,15 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    class RetrieveData extends AsyncTask<Context, Void, JSONObject> {
+    class RetrieveData extends AsyncTask<Session, Void, Void> {
         JSONObject jsonObject;
         protected void onPreExecute() {
             //TODO: SPLASH LOADING SCREEN!
         }
 
-        protected JSONObject doInBackground(Context... params) {
+        protected Void doInBackground(Session... params) {
             try {
+                stringBuilder.append("{\n\"genres\":[\n");
                 for(int i = 0, len = API_URL_LISTS.length; i < len; ++i) {
                     apiurl = new URL(API_URL + API_URL_LISTS[i] + API_APPENDIX + API_KEY);
                     HttpURLConnection urlConnection = (HttpURLConnection) apiurl.openConnection();
@@ -120,24 +124,26 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
                 stringBuilder.append("]\n}");
                 json = stringBuilder.toString();
                 jsonObject = new JSONObject(json);
-                return jsonObject;
             }
             catch(Exception e) {
                 Log.e("Error", e.getMessage(), e);
                 return null;
             }
+            AddToDatabase(jsonObject);
+            setImageDatabase(params[0]);
+            return null;
         }
 
-        protected void onPostExecute(JSONObject response) {
+        protected void onPostExecute(AugmentedImageDatabase response) {
             if(response == null) {
                 //TODO: Splashscreen showing FAIL
             }
-            AddToDatabase(response);
         }
     }
 
-    public AugmentedImageDatabase getImageDatabase(Session session) {
-        AugmentedImageDatabase augmentedImageDatabase = new AugmentedImageDatabase(session);
+    public void setImageDatabase(Session session) {
+        Log.i(TAG, "getImageDatabase() called!");
+        augmentedImageDatabase = new AugmentedImageDatabase(session);
         String query = "SELECT * FROM " + DATABASE_TABLE_BOOKS;
         String title;
         String cover;
@@ -153,40 +159,53 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
             catch (IOException e) {
                 Log.e("Error", e.getMessage(),e);
             }
-            augmentedImageDatabase.addImage(title, bookcover);
+            try {
+            augmentedImageDatabase.addImage(title, bookcover); }
+            catch(ImageInsufficientQualityException e) {
+                Log.e("Error:", e.getMessage(), e);
+            }
+            Log.i(TAG, "[!] Image Added to imgdb [!]");
         }
         cursor.close();
+        Log.i(TAG, "Imgdb Filled!");
+    }
+
+    public AugmentedImageDatabase getAugmentedImageDatabase() {
         return augmentedImageDatabase;
     }
 
     public void AddToDatabase(JSONObject response) {
         try {
+            Log.i(TAG, "Reached AddToDatabase");
             ContentValues newVals = new ContentValues();
             JSONArray genres = response.getJSONArray("genres");
             for (int count = 0; count < genres.length(); count++) {
                 JSONObject genreobj = genres.getJSONObject(count);
                 JSONObject results = genreobj.getJSONObject("results");
-                booktype = results.getString("list_name"); //GET GENRE STRING
-                // txtResultsNYT.append("No. Results: " + genreobj.getInt("num_results") + "\n"); //GET NO. RESULTS
+                booktype = results.getString("list_name"); //Get Genre as Str
+
                 JSONArray nytbooks = results.getJSONArray("books");
 
                 for (int i = 0; i < nytbooks.length(); i++) {
                     JSONObject bookobj = nytbooks.getJSONObject(i);
                     booktitle = bookobj.getString("title");
-                    newVals.put(KEY_TITLE_COLUMN, booktitle);
                     bookisbn = bookobj.getString("primary_isbn13");
-                    newVals.put(KEY_ISBN_COLUMN, bookisbn);
                     bookauthor = bookobj.getString("author");
-                    newVals.put(KEY_AUTHOR_COLUMN, bookauthor);
                     bookdesc = bookobj.getString("description");
-                    newVals.put(KEY_DESCRIPTION_COLUMN, bookdesc);
                     bookcoverURLstr = bookobj.getString("book_image");
+                    newVals.put(KEY_TYPE_COLUMN, booktype);
+                    newVals.put(KEY_TITLE_COLUMN, booktitle);
+                    newVals.put(KEY_ISBN_COLUMN, bookisbn);
+                    newVals.put(KEY_AUTHOR_COLUMN, bookauthor);
+                    newVals.put(KEY_DESCRIPTION_COLUMN, bookdesc);
                     newVals.put(KEY_COVER_COLUMN, bookcoverURLstr);
                     // TODO: bookreview = GoogleApi -> Get Review via ISBN
                     // TODO: bookpagecount = GoogleApi -> Get page count via ISBN
+                    SQLiteDatabase db = this.getWritableDatabase();
+                    Log.i(TAG, "getWriteableDatabase() called");
+                    db.insert(DATABASE_TABLE_BOOKS, null, newVals);
+                    Log.i(TAG, "Database theoretically filled once");
                 }
-                SQLiteDatabase db = this.getWritableDatabase();
-                db.insert(DATABASE_TABLE_BOOKS, null, newVals);
             }
         }
         catch (JSONException e) {
