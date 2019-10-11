@@ -75,14 +75,12 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
     // Misc //////////
     private StringBuilder stringBuilder = new StringBuilder();
     URL apiurl;
-
     /////////////////////////
 
     public AugmentedImageDatabaseHelper(Context context)
     {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        RetrieveData RD = new RetrieveData();
-        RD.execute();
+        new RetrieveData().execute(context);
     }
 
     @Override
@@ -96,14 +94,13 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    class RetrieveData extends AsyncTask<Void, Void, JSONObject> {
+    class RetrieveData extends AsyncTask<Context, Void, JSONObject> {
         JSONObject jsonObject;
-
         protected void onPreExecute() {
             //TODO: SPLASH LOADING SCREEN!
         }
 
-        protected JSONObject doInBackground(Void... urls) {
+        protected JSONObject doInBackground(Context... params) {
             try {
                 for(int i = 0, len = API_URL_LISTS.length; i < len; ++i) {
                     apiurl = new URL(API_URL + API_URL_LISTS[i] + API_APPENDIX + API_KEY);
@@ -133,44 +130,9 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
 
         protected void onPostExecute(JSONObject response) {
             if(response == null) {
-                //TODO Splashscreen showing FAIL
+                //TODO: Splashscreen showing FAIL
             }
-            try {
-                ContentValues newVals = new ContentValues();
-                JSONArray genres = response.getJSONArray("genres");
-                for (int count = 0; count < genres.length(); count++) {
-                    JSONObject genreobj = genres.getJSONObject(count);
-                    JSONObject results = genreobj.getJSONObject("results");
-                    booktype = results.getString("list_name"); //GET GENRE STRING
-                    // txtResultsNYT.append("No. Results: " + genreobj.getInt("num_results") + "\n"); //GET NO. RESULTS
-                    JSONArray nytbooks = results.getJSONArray("books");
-
-                    for (int i = 0; i < nytbooks.length(); i++) {
-                        JSONObject bookobj = nytbooks.getJSONObject(i);
-                        booktitle = bookobj.getString("title");
-                        newVals.put(KEY_TITLE_COLUMN, booktitle);
-                        bookisbn = bookobj.getString("primary_isbn13");
-                        newVals.put(KEY_ISBN_COLUMN, bookisbn);
-                        bookauthor = bookobj.getString("author");
-                        newVals.put(KEY_AUTHOR_COLUMN, bookauthor);
-                        bookdesc = bookobj.getString("description");
-                        newVals.put(KEY_DESCRIPTION_COLUMN, bookdesc);
-                        bookcoverURLstr = bookobj.getString("book_image");
-                        newVals.put(KEY_COVER_COLUMN, bookcoverURLstr);
-                        // TODO: bookreview = GoogleApi -> Get Review via ISBN
-                        // TODO: bookpagecount = GoogleApi -> Get page count via ISBN
-                    }
-                    SQLiteDatabase db = getWritableDatabase();
-                    db.insert(DATABASE_TABLE_BOOKS, null, newVals);
-                }
-            }
-            catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            catch (Exception e) {
-                Log.e("Error", e.getMessage(), e);
-            }
+            AddToDatabase(response);
         }
     }
 
@@ -191,9 +153,48 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
             catch (IOException e) {
                 Log.e("Error", e.getMessage(),e);
             }
-            augmentedImageDatabase.addImage(title, bookcover); //TODO: URL to Bitmap!
+            augmentedImageDatabase.addImage(title, bookcover);
         }
         cursor.close();
         return augmentedImageDatabase;
+    }
+
+    public void AddToDatabase(JSONObject response) {
+        try {
+            ContentValues newVals = new ContentValues();
+            JSONArray genres = response.getJSONArray("genres");
+            for (int count = 0; count < genres.length(); count++) {
+                JSONObject genreobj = genres.getJSONObject(count);
+                JSONObject results = genreobj.getJSONObject("results");
+                booktype = results.getString("list_name"); //GET GENRE STRING
+                // txtResultsNYT.append("No. Results: " + genreobj.getInt("num_results") + "\n"); //GET NO. RESULTS
+                JSONArray nytbooks = results.getJSONArray("books");
+
+                for (int i = 0; i < nytbooks.length(); i++) {
+                    JSONObject bookobj = nytbooks.getJSONObject(i);
+                    booktitle = bookobj.getString("title");
+                    newVals.put(KEY_TITLE_COLUMN, booktitle);
+                    bookisbn = bookobj.getString("primary_isbn13");
+                    newVals.put(KEY_ISBN_COLUMN, bookisbn);
+                    bookauthor = bookobj.getString("author");
+                    newVals.put(KEY_AUTHOR_COLUMN, bookauthor);
+                    bookdesc = bookobj.getString("description");
+                    newVals.put(KEY_DESCRIPTION_COLUMN, bookdesc);
+                    bookcoverURLstr = bookobj.getString("book_image");
+                    newVals.put(KEY_COVER_COLUMN, bookcoverURLstr);
+                    // TODO: bookreview = GoogleApi -> Get Review via ISBN
+                    // TODO: bookpagecount = GoogleApi -> Get page count via ISBN
+                }
+                SQLiteDatabase db = this.getWritableDatabase();
+                db.insert(DATABASE_TABLE_BOOKS, null, newVals);
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        catch (Exception e) {
+            Log.e("Error", e.getMessage(), e);
+        }
     }
 }
