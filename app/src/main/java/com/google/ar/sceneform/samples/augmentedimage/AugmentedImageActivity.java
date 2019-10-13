@@ -107,8 +107,6 @@ public class AugmentedImageActivity extends AppCompatActivity {
         case TRACKING:
           fitToScanView.setVisibility(View.GONE);
           itemDetected.setVisibility(View.GONE);
-          String imageName = augmentedImage.getName();
-          changePopUpInfo(imageName);
 
           // Create an anchor for detected image
           if (!augmentedImageMap.containsKey(augmentedImage)) {

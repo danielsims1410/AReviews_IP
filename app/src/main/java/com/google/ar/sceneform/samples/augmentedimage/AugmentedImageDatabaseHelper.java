@@ -27,7 +27,8 @@ import static android.graphics.BitmapFactory.decodeStream;
 
 public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
 
-    // API Strings //////////
+    //////////////////////////////////////////////////////////////////////////
+    // API STRINGS ////////////////////////////////////////////////////////////////////////////////
     private static final String API_URL = "https://api.nytimes.com/svc/books/v3/lists/current/";
     private final String[] API_URL_LISTS = {"hardcover-fiction", "hardcover-nonfiction",
             "young-adult", "humor",
@@ -35,9 +36,10 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
             "picture-books", "education"};
     private static final String API_APPENDIX = ".json?api-key=";
     private static final String API_KEY = "nswaoVUNKJ0N6YROAtnuls7nNHBGcs8G";
-    /////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Database Strings //////////
+    ///////////////////////////////////////////////////////////////////////////
+    // DATABASE STRINGS ///////////////////////////////////////////////////////////////////////////
     public static String DATABASE_NAME = "books_database.db";
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_TABLE_BOOKS = "books";
@@ -50,16 +52,16 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_TYPE_COLUMN = "TYPE_COLUMN";
     private static final String KEY_PAGE_COUNT_COLUMN = "PAGE_COUNT_COLUMN";
     private static final String KEY_COVER_COLUMN = "COVER_COLUMN";
-
     private static final String CREATE_DATABASE_TABLE_EXPENSES = "CREATE TABLE "
             + DATABASE_TABLE_BOOKS + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_TITLE_COLUMN + " TEXT," + KEY_AUTHOR_COLUMN + " TEXT,"
             + KEY_ISBN_COLUMN + " TEXT," + KEY_DESCRIPTION_COLUMN + " TEXT,"
             + KEY_REVIEW_COLUMN + " INTEGER," + KEY_TYPE_COLUMN + " TEXT,"
             + KEY_PAGE_COUNT_COLUMN + " INTEGER," + KEY_COVER_COLUMN + " BLOB);";
-    /////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Book info //////////
+    ///////////////////////
+    // BOOK INFO ////////////////////
     private String json;
     private String booktitle;
     private String bookisbn;
@@ -71,25 +73,27 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
     private String bookcoverURLstr;
     private URL bookcoverURL;
     private Bitmap bookcover;
-    /////////////////////////
+    ///////////////////////////////////
 
-    // Misc //////////
+    /////////////////////////////////////////////////////
+    // MISC ////////////////////////////////////////////////////////////
     private StringBuilder stringBuilder = new StringBuilder();
-    URL apiurl;
+    private URL apiurl;
     private static final String TAG = "DATABASE HELPER";
-    AugmentedImageDatabase augmentedImageDatabase;
-    /////////////////////////
+    private AugmentedImageDatabase augmentedImageDatabase;
+    ////////////////////////////////////////////////////////////////////
 
+    /////////////////////////////////////////////////////////////////////////
+    // CLASS CONSTRUCTOR -> Activates background thread straight off the bat /////
     public AugmentedImageDatabaseHelper(Context context, Session session)
     {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         new RetrieveData().execute(session);
     }
+    //////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_DATABASE_TABLE_EXPENSES);
-    }
+    public void onCreate(SQLiteDatabase db) { db.execSQL(CREATE_DATABASE_TABLE_EXPENSES); }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldversion, int newversion) {
@@ -97,6 +101,8 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // BACKGROUND THREAD -> Handles all network tasks (API connectivity, Bitmap downloads, etc.) ////////////////////////////////////////
     class RetrieveData extends AsyncTask<Session, Void, Void> {
         JSONObject jsonObject;
         protected void onPreExecute() {
@@ -140,7 +146,10 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
             }
         }
     }
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    //////////////////////////////////////////////////////////////////////
+    // SETS ALL IMAGES IN DATABASE INTO IMGDB ////////////////////////////////////////////////
     public void setImageDatabase(Session session) {
         Log.i(TAG, "getImageDatabase() called!");
         augmentedImageDatabase = new AugmentedImageDatabase(session);
@@ -164,16 +173,23 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
             catch(ImageInsufficientQualityException e) {
                 Log.e("Error:", e.getMessage(), e);
             }
-            Log.i(TAG, "[!] Image Added to imgdb [!]");
+            Log.i(TAG, "[!] " + title + " Image Added to imgdb [!]");
+            Log.i(TAG, "Cover URL: " + cover);
         }
         cursor.close();
-        Log.i(TAG, "Imgdb Filled!");
+        Log.i(TAG, "################## Imgdb Filled! ##################");
     }
+    //////////////////////////////////////////////////////////////////////////////////////////
 
+    /////////////////////////////////////////////////////
+    // RETURNS IMGDB //////////////////////////////////////////////
     public AugmentedImageDatabase getAugmentedImageDatabase() {
         return augmentedImageDatabase;
     }
+    ///////////////////////////////////////////////////////////////
 
+    ///////////////////////////////////////////////////////////////////////////
+    // ADDS ENTRIES INTO SQLITE DATABASE /////////////////////////////////////////////////////
     public void AddToDatabase(JSONObject response) {
         try {
             Log.i(TAG, "Reached AddToDatabase");
@@ -216,4 +232,5 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
             Log.e("Error", e.getMessage(), e);
         }
     }
+    /////////////////////////////////////////////////////////////////////////////////////////
 }
