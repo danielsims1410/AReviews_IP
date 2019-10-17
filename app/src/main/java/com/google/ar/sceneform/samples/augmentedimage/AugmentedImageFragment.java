@@ -110,7 +110,12 @@ public class AugmentedImageFragment extends ArFragment {
       Log.e(TAG, "[!] Cannot Initialise Database [!]");
       return false;
     }
+
+    //TODO: Must be a better way of doing this
+    //TODO: SPLASH SCREEN GOD DAMN IT
+    while(!databaseHelper.getIsFilled()) {} //Wait for database to be filled!
     config.setAugmentedImageDatabase(databaseHelper.getAugmentedImageDatabase());
+    Log.i("CONFIG", "Image Database Set Here!");
 
     //Convert images->bitmap
     /*Bitmap augmentedImageBitmap = loadAugmentedImageBitmap(assetManager, DEFAULT_IMAGE_NAME);

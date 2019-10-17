@@ -81,6 +81,7 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
     private URL apiurl;
     private static final String TAG = "DATABASE HELPER";
     private AugmentedImageDatabase augmentedImageDatabase;
+    private boolean filled = false;
     ////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////////
@@ -178,6 +179,7 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         Log.i(TAG, "################## Imgdb Filled! ##################");
+        filled = true;
     }
     //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -187,6 +189,10 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
         return augmentedImageDatabase;
     }
     ///////////////////////////////////////////////////////////////
+
+    public boolean getIsFilled() {
+        return filled;
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     // ADDS ENTRIES INTO SQLITE DATABASE /////////////////////////////////////////////////////
