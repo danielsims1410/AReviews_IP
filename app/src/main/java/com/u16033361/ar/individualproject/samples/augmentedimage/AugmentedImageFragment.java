@@ -1,20 +1,4 @@
-/*
- * Copyright 2018 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package com.google.ar.sceneform.samples.augmentedimage;
+package com.u16033361.ar.individualproject.samples.augmentedimage;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -28,7 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.google.ar.core.AugmentedImageDatabase;
+
 import com.google.ar.core.Config;
 import com.google.ar.core.Session;
 import com.google.ar.sceneform.samples.common.helpers.SnackbarHelper;
@@ -41,14 +25,6 @@ import java.io.InputStream;
  */
 public class AugmentedImageFragment extends ArFragment {
   private static final String TAG = "AugmentedImageFragment";
-
-  /// Image filenames in assets ///////////////////
-  private static final String DEFAULT_IMAGE_NAME = "default.jpg";
-  private static final String FLAG_IMAGE_NAME = "Logotest.jpg";
-  private static final String COCO_POPS_PACKAGING = "coco_pops_packaging.jpg";
-  private static final String DANI_DEX = "dani_dex.jpg";
-  private static final String WHITE_COCO_POPS_PACKAGING = "white_coco_pops_packaging.jpg";
-  /////////////////////////////////////////////////
   private static final double MIN_OPENGL_VERSION = 3.0;
 
   @Override
@@ -116,32 +92,12 @@ public class AugmentedImageFragment extends ArFragment {
     while(!databaseHelper.getIsFilled()) {} //Wait for database to be filled!
     config.setAugmentedImageDatabase(databaseHelper.getAugmentedImageDatabase());
     Log.i("CONFIG", "Image Database Set Here!");
-
-    //Convert images->bitmap
-    /*Bitmap augmentedImageBitmap = loadAugmentedImageBitmap(assetManager, DEFAULT_IMAGE_NAME);
-    if (augmentedImageBitmap == null) { return false; }
-    Bitmap logoBitmap = loadAugmentedImageBitmap(assetManager, FLAG_IMAGE_NAME);
-    if (logoBitmap == null) { return false; }
-    Bitmap cocoPopsBitmap = loadAugmentedImageBitmap(assetManager, COCO_POPS_PACKAGING);
-    if(cocoPopsBitmap == null) { return false; }
-    Bitmap daniDexBitmap = loadAugmentedImageBitmap(assetManager, DANI_DEX);
-    if(daniDexBitmap == null) { return false; }
-    Bitmap whiteCocoPopsBitmap = loadAugmentedImageBitmap(assetManager, WHITE_COCO_POPS_PACKAGING);
-    if(whiteCocoPopsBitmap == null) { return false; }*/
-
-    //Add images to database (one at a time)
-    // TODO create pre-generated imgdb - will have several adverts/packaging
-      //TODO so this ain't ideal long-term
-    /*augmentedImageDatabase = new AugmentedImageDatabase(session);
-    augmentedImageDatabase.addImage(DEFAULT_IMAGE_NAME, augmentedImageBitmap);
-    augmentedImageDatabase.addImage(FLAG_IMAGE_NAME, logoBitmap);
-    augmentedImageDatabase.addImage(COCO_POPS_PACKAGING, cocoPopsBitmap);
-    augmentedImageDatabase.addImage(DANI_DEX, daniDexBitmap);
-    augmentedImageDatabase.addImage(WHITE_COCO_POPS_PACKAGING, whiteCocoPopsBitmap);*/
-
     return true;
+
   }
 
+  //Unused function atm - was used in early days to convert images in assets to bitmap
+  //Keep for now JUST IN CASE
   private Bitmap loadAugmentedImageBitmap(AssetManager assetManager, String filename) {
     try (InputStream is = assetManager.open(filename)) {
       return BitmapFactory.decodeStream(is);

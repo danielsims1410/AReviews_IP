@@ -1,4 +1,4 @@
-package com.google.ar.sceneform.samples.augmentedimage;
+package com.u16033361.ar.individualproject.samples.augmentedimage;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -82,6 +82,7 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DATABASE HELPER";
     private AugmentedImageDatabase augmentedImageDatabase;
     private boolean filled = false;
+    private boolean dbhasentries = false;
     ////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////////
@@ -111,32 +112,33 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
         }
 
         protected Void doInBackground(Session... params) {
-            try {
-                stringBuilder.append("{\n\"genres\":[\n");
-                for(int i = 0, len = API_URL_LISTS.length; i < len; ++i) {
-                    apiurl = new URL(API_URL + API_URL_LISTS[i] + API_APPENDIX + API_KEY);
-                    HttpURLConnection urlConnection = (HttpURLConnection) apiurl.openConnection();
-                    try {
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                        String line;
-                        while ((line = bufferedReader.readLine()) != null) {
-                            stringBuilder.append(line).append("\n");
+            if(!databaseHasEntries()) {
+                try {
+                    stringBuilder.append("{\n\"genres\":[\n");
+                    for (int i = 0, len = API_URL_LISTS.length; i < len; ++i) {
+                        apiurl = new URL(API_URL + API_URL_LISTS[i] + API_APPENDIX + API_KEY);
+                        HttpURLConnection urlConnection = (HttpURLConnection) apiurl.openConnection();
+                        try {
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                            String line;
+                            while ((line = bufferedReader.readLine()) != null) {
+                                stringBuilder.append(line).append("\n");
+                            }
+                            if (i != len - 1) stringBuilder.append(",\n");
+                            bufferedReader.close();
+                        } finally {
+                            urlConnection.disconnect();
                         }
-                        if (i != len - 1) stringBuilder.append(",\n");
-                        bufferedReader.close();
-                    } finally {
-                        urlConnection.disconnect();
                     }
+                    stringBuilder.append("]\n}");
+                    json = stringBuilder.toString();
+                    jsonObject = new JSONObject(json);
+                } catch (Exception e) {
+                    Log.e("Error", e.getMessage(), e);
+                    return null;
                 }
-                stringBuilder.append("]\n}");
-                json = stringBuilder.toString();
-                jsonObject = new JSONObject(json);
+                AddToDatabase(jsonObject);
             }
-            catch(Exception e) {
-                Log.e("Error", e.getMessage(), e);
-                return null;
-            }
-            AddToDatabase(jsonObject);
             setImageDatabase(params[0]);
             return null;
         }
@@ -194,6 +196,14 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
         return filled;
     }
 
+    public boolean databaseHasEntries() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor dbcursor = db.rawQuery("SELECT * FROM " + DATABASE_TABLE_BOOKS, null);
+        if (dbcursor.moveToFirst()) { dbhasentries = true; }
+        else { dbhasentries = false; }
+        return dbhasentries;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // ADDS ENTRIES INTO SQLITE DATABASE /////////////////////////////////////////////////////
     public void AddToDatabase(JSONObject response) {
@@ -230,6 +240,7 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
                 }
             }
         }
+
         catch (JSONException e) {
             e.printStackTrace();
         }
