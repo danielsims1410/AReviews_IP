@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.ar.core.AugmentedImage;
 import com.google.ar.core.Frame;
@@ -77,15 +78,20 @@ public class AugmentedImageActivity extends AppCompatActivity {
 
           // Create an anchor for detected image
           if (!augmentedImageMap.containsKey(augmentedImage)) {
-             AugmentedImageNode node = new AugmentedImageNode(this, augmentedImage.getName(), viewTest);
+             AugmentedImageNode node = new AugmentedImageNode(this,
+                     new ViewRenderable(augmentedImage.getName(), this).getView());
             node.setImage(augmentedImage);
             augmentedImageMap.put(augmentedImage, node);
             arFragment.getArSceneView().getScene().addChild(node);
+            Toast toast = Toast.makeText(this, augmentedImage.getName() + " Detected",
+                    Toast.LENGTH_SHORT);
+            toast.show();
           }
           break;
 
         case STOPPED:
           augmentedImageMap.remove(augmentedImage);
+          fitToScanView.setVisibility(View.VISIBLE);
           break;
       }
     }

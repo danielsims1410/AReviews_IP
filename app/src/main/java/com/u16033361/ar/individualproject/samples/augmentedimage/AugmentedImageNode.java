@@ -26,7 +26,7 @@ public class AugmentedImageNode extends AnchorNode {
   // View used as a renderable
   private static CompletableFuture<ViewRenderable> infoBox;
 
-  public AugmentedImageNode(Context context, String imagename, View view) {
+  public AugmentedImageNode(Context context, View view) {
     // Build the renderable
     if (infoBox == null) {
       infoBox =

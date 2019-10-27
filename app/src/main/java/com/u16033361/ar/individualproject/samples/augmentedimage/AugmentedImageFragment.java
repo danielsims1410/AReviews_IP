@@ -93,7 +93,6 @@ public class AugmentedImageFragment extends ArFragment {
     config.setAugmentedImageDatabase(databaseHelper.getAugmentedImageDatabase());
     Log.i("CONFIG", "Image Database Set Here!");
     return true;
-
   }
 
   //Unused function atm - was used in early days to convert images in assets to bitmap

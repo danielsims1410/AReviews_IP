@@ -74,6 +74,7 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
     private URL bookcoverURL;
     private Bitmap bookcover;
     ///////////////////////////////////
+    //TODO: Local variables pls x
 
     /////////////////////////////////////////////////////
     // MISC ////////////////////////////////////////////////////////////
@@ -82,7 +83,8 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DATABASE HELPER";
     private AugmentedImageDatabase augmentedImageDatabase;
     private boolean filled = false;
-    private boolean dbhasentries = false;
+    private boolean dbhasentries;
+    private ViewRenderable viewRenderable;
     ////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////////
@@ -187,26 +189,23 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
 
     /////////////////////////////////////////////////////
     // RETURNS IMGDB //////////////////////////////////////////////
-    public AugmentedImageDatabase getAugmentedImageDatabase() {
-        return augmentedImageDatabase;
-    }
+    public AugmentedImageDatabase getAugmentedImageDatabase() { return augmentedImageDatabase; }
     ///////////////////////////////////////////////////////////////
 
-    public boolean getIsFilled() {
-        return filled;
-    }
+    public boolean getIsFilled() { return filled; }
 
-    public boolean databaseHasEntries() {
+    private boolean databaseHasEntries() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor dbcursor = db.rawQuery("SELECT * FROM " + DATABASE_TABLE_BOOKS, null);
         if (dbcursor.moveToFirst()) { dbhasentries = true; }
         else { dbhasentries = false; }
+        dbcursor.close();
         return dbhasentries;
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // ADDS ENTRIES INTO SQLITE DATABASE /////////////////////////////////////////////////////
-    public void AddToDatabase(JSONObject response) {
+    private void AddToDatabase(JSONObject response) {
         try {
             Log.i(TAG, "Reached AddToDatabase");
             ContentValues newVals = new ContentValues();
