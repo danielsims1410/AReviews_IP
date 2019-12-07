@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import static android.graphics.BitmapFactory.decodeStream;
 
 public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
 
@@ -84,15 +83,14 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
     private AugmentedImageDatabase augmentedImageDatabase;
     private boolean filled = false;
     private boolean dbhasentries;
-    private ViewRenderable viewRenderable;
     ////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////////
     // CLASS CONSTRUCTOR -> Activates background thread straight off the bat /////
-    public AugmentedImageDatabaseHelper(Context context, Session session)
+    public AugmentedImageDatabaseHelper(Context context, Session session, Boolean run)
     {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        new RetrieveData().execute(session);
+        if (run) new RetrieveData().execute(session);
     }
     //////////////////////////////////////////////////////////////////////////////
 
@@ -156,7 +154,6 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
     //////////////////////////////////////////////////////////////////////
     // SETS ALL IMAGES IN DATABASE INTO IMGDB ////////////////////////////////////////////////
     public void setImageDatabase(Session session) {
-        Log.i(TAG, "getImageDatabase() called!");
         augmentedImageDatabase = new AugmentedImageDatabase(session);
         String query = "SELECT * FROM " + DATABASE_TABLE_BOOKS;
         String title;
@@ -171,7 +168,7 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
                 bookcover = BitmapFactory.decodeStream(bookcoverURL.openStream());
             }
             catch (IOException e) {
-                Log.e("Error", e.getMessage(),e);
+                Log.e("Error:", e.getMessage(),e);
             }
             try {
             augmentedImageDatabase.addImage(title, bookcover); }
@@ -197,17 +194,30 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
     private boolean databaseHasEntries() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor dbcursor = db.rawQuery("SELECT * FROM " + DATABASE_TABLE_BOOKS, null);
-        if (dbcursor.moveToFirst()) { dbhasentries = true; }
-        else { dbhasentries = false; }
+        dbhasentries = dbcursor.moveToFirst();
         dbcursor.close();
         return dbhasentries;
+    }
+
+    public String getInfo(String title, String query) {
+        String column = "";
+        SQLiteDatabase db = this.getReadableDatabase();
+        switch(query) {
+            case("author"): column = KEY_AUTHOR_COLUMN; break;
+            case("description"): column = KEY_DESCRIPTION_COLUMN; break;
+        }
+        Cursor dbcursor = db.rawQuery("SELECT " + column + " FROM " +
+                DATABASE_TABLE_BOOKS + " WHERE " + KEY_TITLE_COLUMN + " = " + "\"" + title + "\"", null);
+        dbcursor.moveToFirst();
+        String info = dbcursor.getString(dbcursor.getColumnIndex(column));
+        dbcursor.close();
+        return info;
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // ADDS ENTRIES INTO SQLITE DATABASE /////////////////////////////////////////////////////
     private void AddToDatabase(JSONObject response) {
         try {
-            Log.i(TAG, "Reached AddToDatabase");
             ContentValues newVals = new ContentValues();
             JSONArray genres = response.getJSONArray("genres");
             for (int count = 0; count < genres.length(); count++) {
@@ -233,9 +243,7 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
                     // TODO: bookreview = GoogleApi -> Get Review via ISBN
                     // TODO: bookpagecount = GoogleApi -> Get page count via ISBN
                     SQLiteDatabase db = this.getWritableDatabase();
-                    Log.i(TAG, "getWriteableDatabase() called");
                     db.insert(DATABASE_TABLE_BOOKS, null, newVals);
-                    Log.i(TAG, "Database theoretically filled once");
                 }
             }
         }

@@ -32,4 +32,8 @@
     <!-- All customizations that are NOT specific to a particular API-level can go here. -->
   </style>
 
+  <style name="AppTheme.Launcher" parent="Theme.AppCompat">
+    <item name="android:windowBackground">@drawable/splash_screen</item>
+  </style>
+
 </resources>

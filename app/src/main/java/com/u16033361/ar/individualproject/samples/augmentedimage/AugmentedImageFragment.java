@@ -17,12 +17,7 @@ import com.google.ar.core.Config;
 import com.google.ar.core.Session;
 import com.google.ar.sceneform.samples.common.helpers.SnackbarHelper;
 import com.google.ar.sceneform.ux.ArFragment;
-import java.io.IOException;
-import java.io.InputStream;
 
-/**
- * Extend the ArFragment to customize the ARCore session configuration to include Augmented Images.
- */
 public class AugmentedImageFragment extends ArFragment {
   private static final String TAG = "AugmentedImageFragment";
   private static final double MIN_OPENGL_VERSION = 3.0;
@@ -80,7 +75,8 @@ public class AugmentedImageFragment extends ArFragment {
 
   private boolean setupAugmentedImageDatabase(Config config, Session session) {
     //AugmentedImageDatabase augmentedImageDatabase;
-    AugmentedImageDatabaseHelper databaseHelper = new AugmentedImageDatabaseHelper(this.getContext(), session);
+    AugmentedImageDatabaseHelper databaseHelper =
+            new AugmentedImageDatabaseHelper(this.getContext(), session, true);
     AssetManager assetManager = getContext() != null ? getContext().getAssets() : null;
     if (assetManager == null) {
       Log.e(TAG, "[!] Cannot Initialise Database [!]");
@@ -91,18 +87,6 @@ public class AugmentedImageFragment extends ArFragment {
     //TODO: SPLASH SCREEN GOD DAMN IT
     while(!databaseHelper.getIsFilled()) {} //Wait for database to be filled!
     config.setAugmentedImageDatabase(databaseHelper.getAugmentedImageDatabase());
-    Log.i("CONFIG", "Image Database Set Here!");
     return true;
-  }
-
-  //Unused function atm - was used in early days to convert images in assets to bitmap
-  //Keep for now JUST IN CASE
-  private Bitmap loadAugmentedImageBitmap(AssetManager assetManager, String filename) {
-    try (InputStream is = assetManager.open(filename)) {
-      return BitmapFactory.decodeStream(is);
-    } catch (IOException e) {
-      Log.e(TAG, "IO exception loading augmented image bitmap.", e);
-    }
-    return null;
   }
 }
