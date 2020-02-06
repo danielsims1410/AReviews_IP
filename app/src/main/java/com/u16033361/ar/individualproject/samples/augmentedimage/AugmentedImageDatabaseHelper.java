@@ -28,13 +28,17 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
 
     //////////////////////////////////////////////////////////////////////////
     // API STRINGS ////////////////////////////////////////////////////////////////////////////////
-    private static final String API_URL = "https://api.nytimes.com/svc/books/v3/lists/current/";
-    private final String[] API_URL_LISTS = {"hardcover-fiction", "hardcover-nonfiction",
+    private static final String NYT_API_URL = "https://api.nytimes.com/svc/books/v3/lists/current/";
+    private final String[] NYT_API_URL_LISTS = {"hardcover-fiction", "hardcover-nonfiction",
             "young-adult", "humor",
             "advice-how-to-and-miscellaneous",
             "picture-books", "education"};
-    private static final String API_APPENDIX = ".json?api-key=";
-    private static final String API_KEY = "nswaoVUNKJ0N6YROAtnuls7nNHBGcs8G";
+    private static final String NYT_API_APPENDIX = ".json?api-key=";
+    private static final String NYT_API_KEY = "nswaoVUNKJ0N6YROAtnuls7nNHBGcs8G";
+
+    private static final String GOOGLE_API_URL = "https://www.googleapis.com/books/v1/volumes?q=";
+    private static final String GOOGLE_API_APPENDIX = "&key=";
+    private static final String GOOGLE_API_KEY = "AIzaSyCzHJ0nqPFUyrJqxC7vFU_IhUKTvKDcXIM";
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////////////////////
@@ -66,9 +70,9 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
     private String bookisbn;
     private String bookauthor;
     private String bookdesc;
-    private String bookreview;
+    private String bookreview = "-1"; //Not always available
     private String booktype;
-    private int bookpagecount;
+    private String bookpagecount = "-1"; //Not always available
     private String bookcoverURLstr;
     private URL bookcoverURL;
     private Bitmap bookcover;
@@ -77,8 +81,10 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
 
     /////////////////////////////////////////////////////
     // MISC ////////////////////////////////////////////////////////////
-    private StringBuilder stringBuilder = new StringBuilder();
-    private URL apiurl;
+    private StringBuilder stringBuilderNYT = new StringBuilder();
+    private StringBuilder stringBuilderGoogle = new StringBuilder();
+    private URL nytapiurl;
+    private URL googleapiurl;
     private static final String TAG = "DATABASE HELPER";
     private AugmentedImageDatabase augmentedImageDatabase;
     private boolean filled = false;
@@ -106,7 +112,7 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // BACKGROUND THREAD -> Handles all network tasks (API connectivity, Bitmap downloads, etc.) ////////////////////////////////////////
     class RetrieveData extends AsyncTask<Session, Void, Void> {
-        JSONObject jsonObject;
+        JSONObject jsonObjectNYT;
         protected void onPreExecute() {
             //TODO: SPLASH LOADING SCREEN!
         }
@@ -114,30 +120,30 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
         protected Void doInBackground(Session... params) {
             if(!databaseHasEntries()) {
                 try {
-                    stringBuilder.append("{\n\"genres\":[\n");
-                    for (int i = 0, len = API_URL_LISTS.length; i < len; ++i) {
-                        apiurl = new URL(API_URL + API_URL_LISTS[i] + API_APPENDIX + API_KEY);
-                        HttpURLConnection urlConnection = (HttpURLConnection) apiurl.openConnection();
+                    stringBuilderNYT.append("{\n\"genres\":[\n");
+                    for (int i = 0, len = NYT_API_URL_LISTS.length; i < len; ++i) {
+                        nytapiurl = new URL(NYT_API_URL + NYT_API_URL_LISTS[i] + NYT_API_APPENDIX + NYT_API_KEY);
+                        HttpURLConnection urlConnection = (HttpURLConnection) nytapiurl.openConnection();
                         try {
                             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                             String line;
                             while ((line = bufferedReader.readLine()) != null) {
-                                stringBuilder.append(line).append("\n");
+                                stringBuilderNYT.append(line).append("\n");
                             }
-                            if (i != len - 1) stringBuilder.append(",\n");
+                            if (i != len - 1) stringBuilderNYT.append(",\n");
                             bufferedReader.close();
                         } finally {
                             urlConnection.disconnect();
                         }
                     }
-                    stringBuilder.append("]\n}");
-                    json = stringBuilder.toString();
-                    jsonObject = new JSONObject(json);
+                    stringBuilderNYT.append("]\n}");
+                    json = stringBuilderNYT.toString();
+                    jsonObjectNYT = new JSONObject(json);
                 } catch (Exception e) {
                     Log.e("Error", e.getMessage(), e);
                     return null;
                 }
-                AddToDatabase(jsonObject);
+                AddToDatabase(jsonObjectNYT);
             }
             setImageDatabase(params[0]);
             return null;
@@ -205,6 +211,8 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
         switch(query) {
             case("author"): column = KEY_AUTHOR_COLUMN; break;
             case("description"): column = KEY_DESCRIPTION_COLUMN; break;
+            case("review"): column = KEY_REVIEW_COLUMN; break;
+            case("pagecount"): column = KEY_PAGE_COUNT_COLUMN; break;
         }
         Cursor dbcursor = db.rawQuery("SELECT " + column + " FROM " +
                 DATABASE_TABLE_BOOKS + " WHERE " + KEY_TITLE_COLUMN + " = " + "\"" + title + "\"", null);
@@ -220,6 +228,7 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
         try {
             ContentValues newVals = new ContentValues();
             JSONArray genres = response.getJSONArray("genres");
+            JSONObject jsonObjectGoogle;
             for (int count = 0; count < genres.length(); count++) {
                 JSONObject genreobj = genres.getJSONObject(count);
                 JSONObject results = genreobj.getJSONObject("results");
@@ -230,20 +239,55 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
                 for (int i = 0; i < nytbooks.length(); i++) {
                     JSONObject bookobj = nytbooks.getJSONObject(i);
                     booktitle = bookobj.getString("title");
+                    Log.i(TAG, "[!] Book Title: " + booktitle.replaceAll(" ", "+") + "[!]");
                     bookisbn = bookobj.getString("primary_isbn13");
                     bookauthor = bookobj.getString("author");
                     bookdesc = bookobj.getString("description");
                     bookcoverURLstr = bookobj.getString("book_image");
+                    googleapiurl = new URL(GOOGLE_API_URL + booktitle.replaceAll(" ","+") + "+" + bookauthor.replaceAll(" ","+") + GOOGLE_API_APPENDIX + GOOGLE_API_KEY);
+                    Log.i(TAG,"[!] APIURL: " + googleapiurl.toString());
+                    HttpURLConnection urlConnection = (HttpURLConnection) googleapiurl.openConnection();
+                    try {
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null) {
+                            stringBuilderGoogle.append(line).append("\n");
+                        }
+                    } catch(Exception e) {
+                        Log.e("Error", e.getMessage(), e);
+                    } finally {
+                        urlConnection.disconnect();
+                    }
+                    jsonObjectGoogle = new JSONObject(stringBuilderGoogle.toString());
+                    JSONArray googleItems = jsonObjectGoogle.getJSONArray("items");
+                    int googleItemsLength = googleItems.length();
+                    int index = 0;
+                    boolean resultFound = true;
+                    JSONObject result = googleItems.getJSONObject(index);
+
+                    while(!result.getJSONObject("volumeInfo").getString("title").equalsIgnoreCase(booktitle)) {
+                        try { result = googleItems.getJSONObject(++index); }
+                        catch(Exception e) { resultFound = false; break; }
+                        Log.i(TAG,"IN WHILE LOOP");
+                    }
+
+                    if(resultFound) {
+                        JSONObject volumeInfo = result.getJSONObject("volumeInfo");
+                        Log.i(TAG, "Title from GGL: " + volumeInfo.getString("title"));
+                        if (volumeInfo.has("pageCount")) bookpagecount = volumeInfo.getString("pageCount");
+                        if (volumeInfo.has("averageRating")) bookreview = volumeInfo.getString("averageRating");
+                    }
                     newVals.put(KEY_TYPE_COLUMN, booktype);
                     newVals.put(KEY_TITLE_COLUMN, booktitle);
                     newVals.put(KEY_ISBN_COLUMN, bookisbn);
                     newVals.put(KEY_AUTHOR_COLUMN, bookauthor);
                     newVals.put(KEY_DESCRIPTION_COLUMN, bookdesc);
                     newVals.put(KEY_COVER_COLUMN, bookcoverURLstr);
-                    // TODO: bookreview = GoogleApi -> Get Review via ISBN
-                    // TODO: bookpagecount = GoogleApi -> Get page count via ISBN
+                    newVals.put(KEY_REVIEW_COLUMN, bookreview);
+                    newVals.put(KEY_PAGE_COUNT_COLUMN, bookpagecount);
                     SQLiteDatabase db = this.getWritableDatabase();
                     db.insert(DATABASE_TABLE_BOOKS, null, newVals);
+                    stringBuilderGoogle.setLength(0);
                 }
             }
         }

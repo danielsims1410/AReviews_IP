@@ -84,7 +84,6 @@ public class AugmentedImageFragment extends ArFragment {
     }
 
     //TODO: Must be a better way of doing this
-    //TODO: SPLASH SCREEN GOD DAMN IT
     while(!databaseHelper.getIsFilled()) {} //Wait for database to be filled!
     config.setAugmentedImageDatabase(databaseHelper.getAugmentedImageDatabase());
     return true;

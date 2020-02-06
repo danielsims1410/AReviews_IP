@@ -4,17 +4,11 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="2dp">
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center">
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_gravity="center"
             android:layout_margin="2dp">
 
 
@@ -44,22 +38,23 @@
             android:layout_gravity="center"
             android:text="Book author"
             android:textColor="#FFFFFF"
-            android:textSize="7sp" />
+            android:textSize="9sp" />
+
+            <TextView
+                android:id="@+id/txtPageCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Page Count"
+                android:layout_gravity="center"
+                android:textSize="6sp"
+                android:shadowColor="#000000"
+                android:shadowDx="1.0"
+                android:shadowDy="1.0"
+                android:textColor="#FFFFFF" />
         </LinearLayout>
 
-        <ImageView
-            android:shadowColor="#000000"
-            android:shadowDx="1.0"
-            android:shadowDy="1.0"
-            android:shadowRadius="2.0"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center"
-            android:layout_margin="4dp"
-            android:src="@drawable/ic_launcher"/>
-    </LinearLayout>
-
     <ScrollView
+        android:id="@+id/sv_description"
         android:layout_width="120dp"
         android:layout_marginTop="2dp"
         android:layout_height="match_parent"
@@ -78,4 +73,71 @@
             android:textSize="8sp"
             android:textColor="#FFFFFF" />
     </ScrollView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center" >
+
+        <ImageView
+            android:id="@+id/imgReview1"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="17dp"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:shadowColor="#000000"
+            android:shadowDx="1.0"
+            android:shadowDy="1.0"> </ImageView>
+
+        <ImageView
+            android:id="@+id/imgReview2"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="17dp"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:shadowColor="#000000"
+            android:shadowDx="1.0"
+            android:shadowDy="1.0"> </ImageView>
+
+        <ImageView
+            android:id="@+id/imgReview3"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="17dp"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:shadowColor="#000000"
+            android:shadowDx="1.0"
+            android:shadowDy="1.0"> </ImageView>
+
+        <ImageView
+            android:id="@+id/imgReview4"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="17dp"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:shadowColor="#000000"
+            android:shadowDx="1.0"
+            android:shadowDy="1.0"> </ImageView>
+
+        <ImageView
+            android:id="@+id/imgReview5"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="17dp"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:shadowColor="#000000"
+            android:shadowDx="1.0"
+            android:shadowDy="1.0"> </ImageView>
+
+    </LinearLayout>
+
+
+
 </LinearLayout>
