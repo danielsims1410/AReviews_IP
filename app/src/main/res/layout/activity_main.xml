@@ -1,9 +1,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".AugmentedImageActivity">
-
 
     <fragment android:name="com.u16033361.ar.individualproject.samples.augmentedimage.AugmentedImageFragment"
         android:id="@+id/ux_fragment"
@@ -11,14 +11,14 @@
         android:layout_height="match_parent" />
 
 
-  <ImageView
-      android:id="@+id/image_view_fit_to_scan"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:layout_gravity="center"
-      android:scaleType="fitCenter"
-      android:src="@drawable/fit_to_scan4"
-      android:contentDescription="@string/fit_image_to_scan"
+    <ImageView
+        android:id="@+id/image_view_fit_to_scan"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:scaleType="fitCenter"
+        android:src="@drawable/fit_to_scan_5"
+        android:contentDescription="@string/fit_image_to_scan"
       />
 
     <ImageView
@@ -40,4 +40,27 @@
         android:layout_marginTop="10dp"
         android:text="In Development Model">
     </TextView>
+
+    <Button
+        android:id="@+id/btnShowBooks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:textAlignment="center"
+        android:textColor="#F94D01"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="10dp"
+        android:textSize="15dp"
+        android:text="Show Compatible Books"
+        android:onClick="switchCompatibleBooks"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvBooks"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="60dp"
+        android:visibility="invisible"
+        />
 </FrameLayout>

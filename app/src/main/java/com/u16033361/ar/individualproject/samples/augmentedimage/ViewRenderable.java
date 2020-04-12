@@ -31,7 +31,7 @@ public class ViewRenderable {
     private AugmentedImageDatabaseHelper aidh;
     private ScrollView scrollView;
     private double reviewScore;
-    private Bitmap bmpStarFull, bmpStarHalf, bmpStarEmpty;
+    private Bitmap bmpStarFull, bmpStarHalf, bmpStarEmpty, bmpStarNull;
 
     public ViewRenderable(String bookTitle, Context context) {
         this.title = bookTitle;
@@ -52,6 +52,7 @@ public class ViewRenderable {
         bmpStarFull = BitmapFactory.decodeResource(context.getResources(), R.drawable.review_full);
         bmpStarHalf = BitmapFactory.decodeResource(context.getResources(), R.drawable.review_half);
         bmpStarEmpty = BitmapFactory.decodeResource(context.getResources(), R.drawable.review_empty);
+        bmpStarNull = BitmapFactory.decodeResource(context.getResources(), R.drawable.review_null);
         this.txtTitle.setText(title);
         this.txtAuthor.setText(aidh.getInfo(title, "author"));
         this.txtDescription.setText(aidh.getInfo(title, "description"));
@@ -69,14 +70,15 @@ public class ViewRenderable {
             }
             for (int j = i; j < 5; j++) {
                 imgReview.get(j).setVisibility(View.VISIBLE);
-                imgReview.get(j).setImageBitmap(bmpStarEmpty); //TODO: Make Images Dammit
+                imgReview.get(j).setImageBitmap(bmpStarEmpty);
             }
             if (floorDiv != 1) {
-                imgReview.get(i).setImageBitmap(bmpStarHalf); //TODO: Make Images Dammit
+                imgReview.get(i).setImageBitmap(bmpStarHalf);
             }
         }
         else if(reviewScore == -1) {
-            //TODO: Message -> VISIBLE -> "No Review Available!"
+            imgReview.get(0).setVisibility(View.VISIBLE);
+            imgReview.get(0).setImageBitmap(bmpStarNull);
         }
 
         else if(reviewScore == 0.5 || reviewScore == 0) {
@@ -88,7 +90,7 @@ public class ViewRenderable {
         }
 
         if(reviewScore < 2) scrollView.setBackgroundColor(Color.parseColor("#990000"));
-        else if(reviewScore >=4) scrollView.setBackgroundColor(Color.parseColor("#009E08"));
+        else if(reviewScore > 3) scrollView.setBackgroundColor(Color.parseColor("#009E08"));
     }
 
     public View getView() { return display; }

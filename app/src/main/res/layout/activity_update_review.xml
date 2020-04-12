@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".UpdateReviewActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:id="@+id/fullscreen_content_controls"
+            style="?metaButtonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:background="#FFFFFF"
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
+
+            <TextView
+                android:id="@+id/txtUpdateHeaderLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="How would you rate"
+                android:textColor="#E6D14900"
+                android:textSize="20dp"/>
+
+            <TextView
+                android:id="@+id/txtUpdateHeaderTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="[Book Title]"
+                android:textStyle="bold"
+                android:textColor="#E6D14900"
+                android:textSize="20dp"
+                android:layout_marginBottom="20dp"/>
+
+            <Button
+                android:id="@+id/btnStar5"
+                android:background="@drawable/review_empty"
+                android:layout_height="80dp"
+                android:layout_width="80dp"
+                android:onClick="buttonHandler"/>
+            <Button
+                android:id="@+id/btnStar4"
+                android:background="@drawable/review_empty"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:onClick="buttonHandler"/>
+            <Button
+                android:id="@+id/btnStar3"
+                android:background="@drawable/review_empty"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:onClick="buttonHandler"/>
+            <Button
+                android:id="@+id/btnStar2"
+                android:background="@drawable/review_empty"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:onClick="buttonHandler"/>
+            <Button
+                android:id="@+id/btnStar1"
+                android:background="@drawable/review_empty"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:onClick="buttonHandler"/>
+            <Button
+                android:id="@+id/btnSaveUpdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Update"
+                android:background="#E6D14900"
+                android:layout_marginTop="30dp"
+                android:onClick="buttonHandler"/>
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- This FrameLayout insets its children based on system windows using
+         android:fitsSystemWindows. -->
+
+</FrameLayout>

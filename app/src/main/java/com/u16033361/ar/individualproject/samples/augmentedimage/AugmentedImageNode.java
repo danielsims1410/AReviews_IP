@@ -44,14 +44,14 @@ public class AugmentedImageNode extends AnchorNode {
                 return null;
               });
     }
-    // Set the anchor to centre of image
+    // Set the anchor to centre of image.
     setAnchor(image.createAnchor(image.getCenterPose()));
 
-    // Create the node
+    // Create the node.
     Vector3 localPosition = new Vector3();
     Node node;
 
-    // Set the renderable at position declared relative to centre of image
+    // Set the renderable at position declared relative to centre of image.
     localPosition
             .set(0.0f, 0.0f, -0.6f * image.getExtentZ());
      node = new Node();

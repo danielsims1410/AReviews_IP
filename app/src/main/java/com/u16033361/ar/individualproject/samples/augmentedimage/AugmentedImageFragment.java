@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,8 +47,8 @@ public class AugmentedImageFragment extends ArFragment {
   @Override
   public View onCreateView(
       LayoutInflater inflater,
-      @Nullable ViewGroup container,
-      @Nullable Bundle savedInstanceState) {
+      ViewGroup container,
+      Bundle savedInstanceState) {
 
     View view = super.onCreateView(inflater, container, savedInstanceState);
 
@@ -79,7 +78,7 @@ public class AugmentedImageFragment extends ArFragment {
             new AugmentedImageDatabaseHelper(this.getContext(), session, true);
     AssetManager assetManager = getContext() != null ? getContext().getAssets() : null;
     if (assetManager == null) {
-      Log.e(TAG, "[!] Cannot Initialise Database [!]");
+      Log.e(TAG, "[!] Cannot Initialise Assets [!]");
       return false;
     }
 
