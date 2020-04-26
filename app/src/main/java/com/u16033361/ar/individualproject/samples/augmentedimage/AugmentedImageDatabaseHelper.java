@@ -108,7 +108,7 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
 
         this.currentDay = String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
         if(run) {
-            if(recreateDatabase() || true) {
+            if(recreateDatabase()) {
                 new RetrieveData().execute(session);
             } else {
                 setImageDatabase(session);
