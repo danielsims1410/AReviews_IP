@@ -52,6 +52,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookHolder> {
             itemView.setOnClickListener(this);
         }
 
+        //position never used but necessary.
         public void setDetails(Book book, int position) {
             imgCover.setImageBitmap(BitmapFactory.decodeByteArray(book.getImageByte(), 0, book.getImageByte().length));
             if(book.getNewEntry() == 1) txtNew.setVisibility(View.VISIBLE);
