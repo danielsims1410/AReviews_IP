@@ -28,9 +28,8 @@ public class AugmentedImageFragment extends ArFragment {
     //Check for AR compatibility first - be pretty useless without it
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
       Log.e(TAG, "Sceneform requires Android N or later");
-      SnackbarHelper
-          .getInstance()
-          .showError(getActivity(), "Sceneform requires Android N or later");
+      SnackbarHelper.getInstance()
+              .showError(getActivity(), "Sceneform requires Android N or later");
     }
 
     //Checks for OpenGL
@@ -38,19 +37,19 @@ public class AugmentedImageFragment extends ArFragment {
         ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE))
             .getDeviceConfigurationInfo()
             .getGlEsVersion();
+
     if (Double.parseDouble(openGlVersionString) < MIN_OPENGL_VERSION) {
       Log.e(TAG, "Sceneform requires OpenGL ES 3.0 or later");
       SnackbarHelper.getInstance()
-          .showError(getActivity(), "Sceneform requires OpenGL ES 3.0 or later");
+              .showError(getActivity(), "Sceneform requires OpenGL ES 3.0 or later");
     }
 
     //Checks for Internet Connection
-  if(!networkAvailable()) {
-    Log.e(TAG, "No Internet Connection");
-    SnackbarHelper.getInstance()
-            .showError(getActivity(), "Internet Connection Required");
-  }
-
+    if(!networkAvailable()) {
+      Log.e(TAG, "No Internet Connection");
+      SnackbarHelper.getInstance()
+              .showError(getActivity(), "Internet Connection Required");
+    }
   }
 
   @Override
@@ -97,7 +96,8 @@ public class AugmentedImageFragment extends ArFragment {
   }
 
   private boolean networkAvailable() {
-    ConnectivityManager connectivityManager = (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+    ConnectivityManager connectivityManager = (ConnectivityManager)getContext().
+            getSystemService(Context.CONNECTIVITY_SERVICE);
     NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
     return networkInfo != null && networkInfo.isConnected();
   }

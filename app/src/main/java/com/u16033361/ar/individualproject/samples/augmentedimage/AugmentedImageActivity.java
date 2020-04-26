@@ -65,6 +65,7 @@ public class AugmentedImageActivity extends AppCompatActivity implements BookAda
     if(isUpdateDay()) showUpdateSnackbar();
   }
 
+  //On touching an item in the r/view.
   @Override
   public void onItemClick(int position) {
     Intent intent = new Intent(this, UpdateReviewActivity.class);
