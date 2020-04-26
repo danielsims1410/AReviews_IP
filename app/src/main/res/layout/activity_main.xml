@@ -17,8 +17,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:scaleType="fitCenter"
-        android:src="@drawable/fit_to_scan_5"
-        android:contentDescription="@string/fit_image_to_scan"
+        android:src="@drawable/ui_fit_to_scan"
       />
 
     <ImageView
@@ -27,18 +26,18 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:scaleType="fitCenter"
-        android:src="@drawable/item_detected3"
-        android:contentDescription="Item Detected"
+        android:src="@drawable/ui_item_detected"
         android:visibility="invisible"
         />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="top|end"
-        android:layout_marginEnd="30dp"
+        android:layout_gravity="top|center"
         android:layout_marginTop="10dp"
-        android:text="In Development Model">
+        android:textSize="12sp"
+        android:textColor="#56FFFFFF"
+        android:text="@string/nyt_disclaimer">
     </TextView>
 
     <Button
@@ -50,8 +49,8 @@
         android:textColor="#F94D01"
         android:layout_gravity="bottom|center"
         android:layout_marginBottom="10dp"
-        android:textSize="15dp"
-        android:text="Show Compatible Books"
+        android:textSize="15sp"
+        android:text="@string/show_books_init"
         android:onClick="switchCompatibleBooks"
         />
 

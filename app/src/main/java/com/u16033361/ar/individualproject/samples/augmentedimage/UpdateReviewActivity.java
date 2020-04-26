@@ -15,14 +15,10 @@ public class UpdateReviewActivity extends AppCompatActivity {
     private static final String TAG = "Update Book Activity";
 
     private Book book;
-    private Button btnStar1, btnStar2, btnStar3, btnStar4, btnStar5;
-    private Button btnUpdateReview;
     private TextView txtTitleLabel;
     private ArrayList<Button> starButtons;
     private AugmentedImageDatabaseHelper databaseHelper;
     private double reviewScore;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +39,11 @@ public class UpdateReviewActivity extends AppCompatActivity {
 
         //Identify Views
         starButtons = new ArrayList<>();
-        starButtons.add(btnStar1 = findViewById(R.id.btnStar1));
-        starButtons.add(btnStar2 = findViewById(R.id.btnStar2));
-        starButtons.add(btnStar3 = findViewById(R.id.btnStar3));
-        starButtons.add(btnStar4 = findViewById(R.id.btnStar4));
-        starButtons.add(btnStar5 = findViewById(R.id.btnStar5));
-        btnUpdateReview = findViewById(R.id.btnSaveUpdate);
+        starButtons.add(findViewById(R.id.btnStar1));
+        starButtons.add(findViewById(R.id.btnStar2));
+        starButtons.add(findViewById(R.id.btnStar3));
+        starButtons.add(findViewById(R.id.btnStar4));
+        starButtons.add(findViewById(R.id.btnStar5));
         txtTitleLabel = findViewById(R.id.txtUpdateHeaderTitle);
         setUI();
     }

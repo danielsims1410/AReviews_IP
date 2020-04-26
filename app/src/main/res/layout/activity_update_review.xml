@@ -26,19 +26,20 @@
                 android:id="@+id/txtUpdateHeaderLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="How would you rate"
+                android:text="@string/update_activity_header"
                 android:textColor="#E6D14900"
-                android:textSize="20dp"/>
+                android:textSize="20sp"/>
 
+            <!-- This will always change to selected book's title -->
             <TextView
                 android:id="@+id/txtUpdateHeaderTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="[Book Title]"
+                android:text="@string/book_title_placeholder"
                 android:textStyle="bold"
                 android:textColor="#E6D14900"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:layout_marginBottom="20dp"/>
 
             <Button
@@ -75,14 +76,10 @@
                 android:id="@+id/btnSaveUpdate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Update"
+                android:text="@string/btn_update"
                 android:background="#E6D14900"
                 android:layout_marginTop="30dp"
                 android:onClick="buttonHandler"/>
         </LinearLayout>
     </FrameLayout>
-
-    <!-- This FrameLayout insets its children based on system windows using
-         android:fitsSystemWindows. -->
-
 </FrameLayout>

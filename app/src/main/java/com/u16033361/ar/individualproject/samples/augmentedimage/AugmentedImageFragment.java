@@ -3,8 +3,8 @@ package com.u16033361.ar.individualproject.samples.augmentedimage;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 
 import com.google.ar.core.Config;
 import com.google.ar.core.Session;
-import com.google.ar.sceneform.samples.common.helpers.SnackbarHelper;
+import com.u16033361.ar.individualproject.samples.common.helpers.SnackbarHelper;
 import com.google.ar.sceneform.ux.ArFragment;
 
 public class AugmentedImageFragment extends ArFragment {
@@ -33,6 +33,7 @@ public class AugmentedImageFragment extends ArFragment {
           .showError(getActivity(), "[!] Sceneform requires Android N or later [!]");
     }
 
+    //Checks for OpenGL
     String openGlVersionString =
         ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE))
             .getDeviceConfigurationInfo()
@@ -42,6 +43,14 @@ public class AugmentedImageFragment extends ArFragment {
       SnackbarHelper.getInstance()
           .showError(getActivity(), "[!] Sceneform requires OpenGL ES 3.0 or later [!]");
     }
+
+    //Checks for Internet Connection
+  if(!networkAvailable()) {
+    Log.e(TAG, "No Internet Connection");
+    SnackbarHelper.getInstance()
+            .showError(getActivity(), "[!] Internet Connection Required [!]");
+  }
+
   }
 
   @Override
@@ -73,7 +82,6 @@ public class AugmentedImageFragment extends ArFragment {
   }
 
   private boolean setupAugmentedImageDatabase(Config config, Session session) {
-    //AugmentedImageDatabase augmentedImageDatabase;
     AugmentedImageDatabaseHelper databaseHelper =
             new AugmentedImageDatabaseHelper(this.getContext(), session, true);
     AssetManager assetManager = getContext() != null ? getContext().getAssets() : null;
@@ -82,9 +90,15 @@ public class AugmentedImageFragment extends ArFragment {
       return false;
     }
 
-    //TODO: Must be a better way of doing this
+    //IDE will say that condition doesn't change, but it does in the background.
     while(!databaseHelper.getIsFilled()) {} //Wait for database to be filled!
     config.setAugmentedImageDatabase(databaseHelper.getAugmentedImageDatabase());
     return true;
+  }
+
+  private boolean networkAvailable() {
+    ConnectivityManager connectivityManager = (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+    return networkInfo != null && networkInfo.isConnected();
   }
 }

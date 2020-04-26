@@ -2,7 +2,6 @@ package com.u16033361.ar.individualproject.samples.augmentedimage;
 
 //ARCore imports
 import com.google.ar.core.AugmentedImage;
-import com.google.ar.core.AugmentedImageDatabase;
 import com.google.ar.core.Frame;
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.ux.ArFragment;
@@ -64,7 +63,6 @@ public class AugmentedImageActivity extends AppCompatActivity implements BookAda
     rvBookList.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener());
     arFragment.getArSceneView().getScene().addOnUpdateListener(this::onUpdateFrame);
     if(isUpdateDay()) showUpdateSnackbar();
-    showUpdateSnackbar();
   }
 
   @Override

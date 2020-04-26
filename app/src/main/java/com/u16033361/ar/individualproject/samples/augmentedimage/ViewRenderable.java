@@ -1,8 +1,6 @@
 package com.u16033361.ar.individualproject.samples.augmentedimage;
 
-import android.app.Application;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -12,8 +10,6 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
@@ -22,11 +18,7 @@ public class ViewRenderable {
 
     private String title;
     private View display;
-    private TextView txtTitle;
-    private TextView txtAuthor;
-    private TextView txtDescription;
-    private TextView txtPageCount;
-    private ImageView imgReview1, imgReview2, imgReview3, imgReview4, imgReview5;
+    private TextView txtTitle, txtAuthor, txtDescription, txtPageCount;
     private ArrayList<ImageView> imgReview;
     private AugmentedImageDatabaseHelper aidh;
     private ScrollView scrollView;
@@ -37,16 +29,16 @@ public class ViewRenderable {
         this.title = bookTitle;
         aidh = new AugmentedImageDatabaseHelper(context, null, false);
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(LAYOUT_INFLATER_SERVICE);
-        this.display = inflater.inflate(R.layout.drawable_test, null, false);
+        this.display = inflater.inflate(R.layout.ar_display, null, false);
         this.txtPageCount = display.findViewById(R.id.txtPageCount);
         this.txtTitle = display.findViewById(R.id.txtTitle);
         this.txtAuthor = display.findViewById(R.id.txtAuthor);
         this.imgReview = new ArrayList<>();
-        this.imgReview.add(this.imgReview1 = display.findViewById(R.id.imgReview1));
-        this.imgReview.add(this.imgReview2 = display.findViewById(R.id.imgReview2));
-        this.imgReview.add(this.imgReview3 = display.findViewById(R.id.imgReview3));
-        this.imgReview.add(this.imgReview4 = display.findViewById(R.id.imgReview4));
-        this.imgReview.add(this.imgReview5 = display.findViewById(R.id.imgReview5));
+        this.imgReview.add(display.findViewById(R.id.imgReview1));
+        this.imgReview.add(display.findViewById(R.id.imgReview2));
+        this.imgReview.add(display.findViewById(R.id.imgReview3));
+        this.imgReview.add(display.findViewById(R.id.imgReview4));
+        this.imgReview.add(display.findViewById(R.id.imgReview5));
         this.txtDescription = display.findViewById(R.id.txtDescription);
         this.scrollView = display.findViewById(R.id.sv_description);
         bmpStarFull = BitmapFactory.decodeResource(context.getResources(), R.drawable.review_full);

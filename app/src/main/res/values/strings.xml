@@ -16,7 +16,11 @@
 <resources>
     <string name="app_name">AReviews</string>
     <string name="fit_image_to_scan">Fit image to scan</string>
-
+    <string name="nyt_disclaimer">Data Provided by The New York Times</string>
+    <string name="show_books_init">Show Compatible Books</string>
+    <string name="btn_update">Update</string>
+    <string name="update_activity_header">How would you rate</string>
+    <string name="book_title_placeholder">Book Title</string>
     <string name="title_activity_update_review">UpdateReviewActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>

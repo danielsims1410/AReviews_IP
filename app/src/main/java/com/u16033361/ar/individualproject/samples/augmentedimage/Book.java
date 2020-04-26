@@ -27,6 +27,7 @@ public class Book implements Parcelable {
     //no-arg constructor
     public Book() { }
 
+    //Some getters aren't used currently, but doesn't mean they won't be in the future.
     public int getBookID() { return bookID; }
     public void setBookID(int bookID) { this.bookID = bookID; }
 

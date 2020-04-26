@@ -9,15 +9,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
-
 import com.google.ar.core.AugmentedImageDatabase;
 import com.google.ar.core.Session;
 import com.google.ar.core.exceptions.ImageInsufficientQualityException;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
@@ -36,11 +33,11 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
             "advice-how-to-and-miscellaneous",
             "picture-books", "education"};
     private static final String NYT_API_APPENDIX = ".json?api-key=";
-    private static final String NYT_API_KEY = "nswaoVUNKJ0N6YROAtnuls7nNHBGcs8G";
+    private final String NYT_API_KEY;
 
     private static final String GOOGLE_API_URL = "https://www.googleapis.com/books/v1/volumes?q=";
     private static final String GOOGLE_API_APPENDIX = "&key=";
-    private static final String GOOGLE_API_KEY = "AIzaSyCzHJ0nqPFUyrJqxC7vFU_IhUKTvKDcXIM";
+    private final String GOOGLE_API_KEY;
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////////////////////
@@ -88,14 +85,12 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
     private Bitmap bookcover;
     private byte[] bookcoverbytearr;
     ///////////////////////////////////
-    //TODO: Local variables pls x
 
     /////////////////////////////////////////////////////
     // MISC ////////////////////////////////////////////////////////////
-    private StringBuilder stringBuilderNYT = new StringBuilder();
-    private StringBuilder stringBuilderGoogle = new StringBuilder();
-    private URL nytapiurl;
-    private URL googleapiurl;
+    private StringBuilder stringBuilderNYT = new StringBuilder(),
+            stringBuilderGoogle = new StringBuilder();
+    private URL nytapiurl, googleapiurl;
     private static final String TAG = "DATABASE HELPER";
     private AugmentedImageDatabase augmentedImageDatabase;
     private boolean filled = false;
@@ -107,6 +102,10 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
     public AugmentedImageDatabaseHelper(Context context, Session session, Boolean run)
     {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+
+        NYT_API_KEY = context.getString(R.string.nyt_api_key);
+        GOOGLE_API_KEY = context.getString(R.string.google_books_api_key);
+
         this.currentDay = String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
         if(run) {
             if(recreateDatabase()) {
@@ -133,9 +132,6 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
     // BACKGROUND THREAD -> Handles all network tasks (API connectivity, Bitmap downloads, etc.) ////////////////////////////////////////
     class RetrieveData extends AsyncTask<Session, Void, Void> {
         JSONObject jsonObjectNYT;
-        protected void onPreExecute() {
-        }
-
         protected Void doInBackground(Session... params) {
             try {
                 //Starts building the JSON.
@@ -172,12 +168,6 @@ public class AugmentedImageDatabaseHelper extends SQLiteOpenHelper {
             //Adds the images from the database into the image database.
             setImageDatabase(params[0]);
             return null;
-        }
-
-        protected void onPostExecute(AugmentedImageDatabase response) {
-            if(response == null) {
-                //TODO: Anything here?
-            }
         }
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
