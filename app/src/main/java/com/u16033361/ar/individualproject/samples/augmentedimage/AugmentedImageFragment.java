@@ -30,7 +30,7 @@ public class AugmentedImageFragment extends ArFragment {
       Log.e(TAG, "Sceneform requires Android N or later");
       SnackbarHelper
           .getInstance()
-          .showError(getActivity(), "[!] Sceneform requires Android N or later [!]");
+          .showError(getActivity(), "Sceneform requires Android N or later");
     }
 
     //Checks for OpenGL
@@ -41,14 +41,14 @@ public class AugmentedImageFragment extends ArFragment {
     if (Double.parseDouble(openGlVersionString) < MIN_OPENGL_VERSION) {
       Log.e(TAG, "Sceneform requires OpenGL ES 3.0 or later");
       SnackbarHelper.getInstance()
-          .showError(getActivity(), "[!] Sceneform requires OpenGL ES 3.0 or later [!]");
+          .showError(getActivity(), "Sceneform requires OpenGL ES 3.0 or later");
     }
 
     //Checks for Internet Connection
   if(!networkAvailable()) {
     Log.e(TAG, "No Internet Connection");
     SnackbarHelper.getInstance()
-            .showError(getActivity(), "[!] Internet Connection Required [!]");
+            .showError(getActivity(), "Internet Connection Required");
   }
 
   }
